@@ -25,6 +25,10 @@ public class Turret : MonoBehaviour {
 	private float adjRotSpeed;
 	private Quaternion targetRotation;
 
+    //Songs for destruction and projectiles
+    public AudioClip projectileSound;
+    public AudioClip destructionSound;
+
 	// Use this for initialization
 	void Start () {
 		myTransform = this.transform;
@@ -51,6 +55,7 @@ public class Turret : MonoBehaviour {
 				if (Time.time > fireTime) {
 					Instantiate (turretProjectile, turretMuzzle.transform.position, turretMuzzle.transform.rotation);
 					fireTime = Time.time + fireRate;
+                    AudioSource.PlayClipAtPoint(projectileSound, transform.position);
 				}
 
 				//Draw red debug line
