@@ -50,6 +50,13 @@ public class Player : MonoBehaviour {
         }
     }
 
+    void OnTriggerExit(Collider collidingObject) {
+        //If collidingObject is an Enemy
+        if (collidingObject.gameObject.name.Contains("Turret")) {
+            ActionText.SetActive(false);
+        }
+    }
+
     //Called by external game objects
     void TakeDamage(float damage){
 		currentHP -= damage;
