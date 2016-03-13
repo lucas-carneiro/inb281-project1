@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Turret : MonoBehaviour {
 
-	private Transform myTransform;
+	public Transform myTransform;
 
 	//Enemy Player reference
 	private GameObject enemyPlayer;
@@ -19,6 +19,7 @@ public class Turret : MonoBehaviour {
 	//Turret Parts
 	public GameObject turretMuzzle;
 	public GameObject turretRaycast;
+    public GameObject turretPrincipal;
 
 	//Rotation Variables
 	public float rotationSpeed = 1.0f;
@@ -31,7 +32,10 @@ public class Turret : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		myTransform = this.transform;
+        ////If not using muzzle as a rotation point and not addressing the turret object to this script
+        if (turretPrincipal == null) {
+            myTransform = this.transform;
+        }
 		enemyPlayer = GameObject.FindGameObjectWithTag ("Player");
 	}
 	
@@ -49,6 +53,11 @@ public class Turret : MonoBehaviour {
 				targetRotation = Quaternion.LookRotation (enemyPlayer.transform.position - myTransform.position);
 				adjRotSpeed = Mathf.Min(rotationSpeed * Time.deltaTime, 1);
 				myTransform.rotation = Quaternion.Lerp(myTransform.rotation, targetRotation, adjRotSpeed);
+
+                //If using muzzle as a rotation point and addressing the turret object to this script
+                if (turretPrincipal != null) {
+                    turretPrincipal.transform.rotation = myTransform.rotation;
+                }
 
 				//Fire Projectile
 				if (Time.time > fireTime) {
