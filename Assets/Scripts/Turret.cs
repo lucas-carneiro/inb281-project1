@@ -32,7 +32,6 @@ public class Turret : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		myTransform = this.transform;
-
 		enemyPlayer = GameObject.FindGameObjectWithTag ("Player");
 	}
 	
@@ -66,4 +65,9 @@ public class Turret : MonoBehaviour {
 			}
 		}
 	}
+
+    public void Dismantle() {
+        AudioSource.PlayClipAtPoint(destructionSound, transform.position);
+        Destroy(this.gameObject);
+    }
 }

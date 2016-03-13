@@ -44,7 +44,7 @@ public class Player : MonoBehaviour {
         //If collidingObject is an Enemy
         if (collidingObject.gameObject.name.Contains("Turret")){
             if (Input.GetKeyDown(actionKey)){
-                Destroy(collidingObject.gameObject);
+                collidingObject.gameObject.SendMessage("Dismantle", SendMessageOptions.DontRequireReceiver);
                 ActionText.SetActive(false);
             }
         }
