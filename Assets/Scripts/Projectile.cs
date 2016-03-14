@@ -34,8 +34,7 @@ public class Projectile : MonoBehaviour {
 		//If collidingObject is an Enemy
 		if(collidingObject.gameObject.tag == "Player"){
 			collidingObject.transform.SendMessage("TakeDamage", projectileDamage, SendMessageOptions.DontRequireReceiver);
-		}
-
-		Destroy (this.gameObject);
-	}
+        }
+        Destroy(this.gameObject);
+    }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 
 public class Player : MonoBehaviour {
 	public float maxHP = 5f;
@@ -14,10 +13,20 @@ public class Player : MonoBehaviour {
 	public Color damageColor;
 	public float damageFade = 5f;
 
+    //Action variables
     public KeyCode actionKey = KeyCode.Alpha1;
     public GameObject ActionText;
 
-	void Start(){
+    //Teleport variables
+    public GameObject teleportTarget;
+    public AudioClip teleportSound;
+    public KeyCode teleportKey = KeyCode.E;
+    public float teleportCooldown = 5.0f;
+    private bool inCooldown = false;
+    private float cooldownRemaining;
+    public Text teleportText;
+
+    void Start(){
 		currentHP = maxHP;
 		damageColor.a = 0;
 	}
@@ -26,6 +35,22 @@ public class Player : MonoBehaviour {
 		if (currentHP <= 0){
 			//Destroy(this.gameObject);
 		}
+
+        if (inCooldown) {
+            cooldownRemaining -= teleportCooldown * Time.deltaTime;
+            inCooldown = cooldownRemaining > 0f;
+            teleportText.text = Mathf.CeilToInt(cooldownRemaining).ToString();
+            if (!inCooldown) {
+                cooldownRemaining = 0f;
+                teleportTarget.SetActive(true);
+                teleportText.text = "";
+            }
+        }
+        else {
+            if (Input.GetKeyDown(teleportKey)) {
+                Teleport();
+            }
+        }        
 
         //Fade damageImage
 		if (damageImage.color.a > 0f){
@@ -63,4 +88,12 @@ public class Player : MonoBehaviour {
 		HP.transform.localScale = new Vector3(currentHP / maxHP, 1f, 1f);
 		damageImage.color = new Vector4 (damageColor.r, damageColor.g, damageColor.b, 1f);
 	}
+
+    void Teleport() {
+        transform.position = teleportTarget.transform.position;
+        teleportTarget.SetActive(false);
+        inCooldown = true;
+        cooldownRemaining = teleportCooldown;
+        AudioSource.PlayClipAtPoint(teleportSound, transform.position);
+    }
 }
