@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour {
 	public float maxHP = 5f;
@@ -15,7 +16,10 @@ public class Player : MonoBehaviour {
 
     //Action variables
     public KeyCode actionKey = KeyCode.Alpha1;
+    public KeyCode restartKey = KeyCode.Return;
     public Text ActionText;
+    private int scrap = 0;
+    public Text ScoreText;
 
     //Teleport variables
     private bool firstTeleport = false;
@@ -28,6 +32,9 @@ public class Player : MonoBehaviour {
     private float cooldownRemaining;
     public Text teleportText;
 
+    public AudioClip winSound;
+    public AudioClip loseSound;
+
     void Start(){
 		currentHP = maxHP;
 		damageColor.a = 0;
@@ -36,7 +43,7 @@ public class Player : MonoBehaviour {
 
 	void Update(){
 		if (currentHP <= 0){
-			//Destroy(this.gameObject);
+            lose();
 		}
 
         if (inCooldown) {
@@ -59,6 +66,11 @@ public class Player : MonoBehaviour {
 		if (damageImage.color.a > 0f){
 			damageImage.color = Color.Lerp (damageImage.color, Color.clear, damageFade * Time.deltaTime);
 		}
+
+        if (Time.timeScale == 0f && Input.GetKeyDown(restartKey)) {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
 	}
 
     //Interaction between player and objects
@@ -67,7 +79,8 @@ public class Player : MonoBehaviour {
         if (collidingObject.gameObject.tag == "Action") {
             ActionText.text = "" +
                 collidingObject.gameObject.GetComponent<Turret>() +
-                collidingObject.gameObject.GetComponent<EmergencyGlass>() + 
+                collidingObject.gameObject.GetComponent<EmergencyGlass>() +
+                collidingObject.gameObject.GetComponent<EmergencyStop>() +
                 " " + actionKey;
             ActionText.gameObject.SetActive(true);
         }
@@ -102,6 +115,27 @@ public class Player : MonoBehaviour {
         teleportTarget.SetActive(true);
         ActionText.text = "You ate the teleport pill! Now you can teleport by pressing " + teleportKey;
         ActionText.gameObject.SetActive(true);
+    }
+
+    //Called by external game objects
+    public void getScrap() {
+        ScoreText.text = "" + ++scrap;
+    }
+
+    //Called by external game objects
+    public void win() {
+        GameObject.FindGameObjectWithTag("Finish").GetComponent<Light>().color = new Vector4(1, 1, 1, 1);
+        ActionText.text = "You stopped the machines! You won! Press " + restartKey + " to play again.";
+        ActionText.gameObject.SetActive(true);
+        AudioSource.PlayClipAtPoint(winSound, transform.position);
+        Time.timeScale = 0f;
+    }
+
+    public void lose() {
+        ActionText.text = "You died! Maybe someone else will stop the machines... Press " + restartKey + " to play again.";
+        ActionText.gameObject.SetActive(true);
+        AudioSource.PlayClipAtPoint(loseSound, transform.position);
+        Time.timeScale = 0f;
     }
 
     void Teleport() {
