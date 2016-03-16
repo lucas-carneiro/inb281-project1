@@ -18,6 +18,7 @@ public class Player : MonoBehaviour {
     public Text ActionText;
 
     //Teleport variables
+    private bool firstTeleport = false;
     public bool canTeleport = false;
     public GameObject teleportTarget;
     public AudioClip teleportSound;
@@ -75,8 +76,8 @@ public class Player : MonoBehaviour {
         //If collidingObject is an action object
         if (collidingObject.gameObject.tag == "Action") {
             if (Input.GetKeyDown(actionKey)){
-                collidingObject.gameObject.SendMessage("Act", SendMessageOptions.DontRequireReceiver);
                 ActionText.gameObject.SetActive(false);
+                collidingObject.gameObject.SendMessage("Act", SendMessageOptions.DontRequireReceiver);
             }
         }
     }
@@ -97,11 +98,18 @@ public class Player : MonoBehaviour {
     //Called by external game objects
     public void getPower() {
         canTeleport = true;
+        firstTeleport = true;
         teleportTarget.SetActive(true);
+        ActionText.text = "You ate the teleport pill! Now you can teleport by pressing " + teleportKey;
+        ActionText.gameObject.SetActive(true);
     }
 
     void Teleport() {
         if (canTeleport) {
+            if (firstTeleport) {
+                ActionText.gameObject.SetActive(false);
+                firstTeleport = false;
+            }
             transform.position = new Vector3(teleportTarget.transform.position.x, transform.position.y, teleportTarget.transform.position.z);
             teleportTarget.SetActive(false);
             inCooldown = true;
