@@ -30,7 +30,7 @@ public class Turret : MonoBehaviour {
 
     //Songs for destruction and projectiles
     public AudioClip projectileSound;
-    public AudioClip destructionSound;
+    public AudioClip actionSound;
 
     public override string ToString() {
         return actionText;
@@ -86,7 +86,9 @@ public class Turret : MonoBehaviour {
 	}
 
     public void Act() {
-        AudioSource.PlayClipAtPoint(destructionSound, transform.position);
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        player.SendMessage("getScrap", SendMessageOptions.DontRequireReceiver);
+        AudioSource.PlayClipAtPoint(actionSound, transform.position);
         Destroy(this.gameObject);
     }
 }

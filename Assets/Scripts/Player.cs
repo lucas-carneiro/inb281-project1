@@ -30,7 +30,8 @@ public class Player : MonoBehaviour {
     void Start(){
 		currentHP = maxHP;
 		damageColor.a = 0;
-	}
+        teleportTarget.SetActive(canTeleport);
+    }
 
 	void Update(){
 		if (currentHP <= 0){
@@ -96,6 +97,7 @@ public class Player : MonoBehaviour {
     //Called by external game objects
     public void getPower() {
         canTeleport = true;
+        teleportTarget.SetActive(true);
     }
 
     void Teleport() {
