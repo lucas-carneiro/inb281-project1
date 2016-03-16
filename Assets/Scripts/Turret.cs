@@ -11,6 +11,7 @@ public class Turret : MonoBehaviour {
 	//Turret Variables
 	public float range = 25.0f;
 	public float fireRate = 1.0f;
+    public bool rotationOn = true;
 	private float fireTime;
 
 	//Projectile
@@ -48,11 +49,14 @@ public class Turret : MonoBehaviour {
 
 			//If hit has "Player" tag...
 			if (hit.transform.tag == "Player"){
-
-				//Track Player - Linear Interpolation (LERP)
-				targetRotation = Quaternion.LookRotation (enemyPlayer.transform.position - myTransform.position);
-				adjRotSpeed = Mathf.Min(rotationSpeed * Time.deltaTime, 1);
-				myTransform.rotation = Quaternion.Lerp(myTransform.rotation, targetRotation, adjRotSpeed);
+                
+                //If turret is set to rotate				
+                if (rotationOn) {
+                    //Track Player - Linear Interpolation (LERP)
+                    targetRotation = Quaternion.LookRotation(enemyPlayer.transform.position - myTransform.position);
+                    adjRotSpeed = Mathf.Min(rotationSpeed * Time.deltaTime, 1);
+                    myTransform.rotation = Quaternion.Lerp(myTransform.rotation, targetRotation, adjRotSpeed);
+                }				
 
                 //If using muzzle as a rotation point and addressing the turret object to this script
                 if (turretPrincipal != null) {
