@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Turret : MonoBehaviour {
 
+    public string actionText;
 	public Transform myTransform;
 
 	//Enemy Player reference
@@ -31,8 +32,13 @@ public class Turret : MonoBehaviour {
     public AudioClip projectileSound;
     public AudioClip destructionSound;
 
+    public override string ToString() {
+        return actionText;
+    }
+
 	// Use this for initialization
 	void Start () {
+        actionText = "Dismantle:";
         ////If not using muzzle as a rotation point and not addressing the turret object to this script
         if (turretPrincipal == null) {
             myTransform = this.transform;
@@ -79,7 +85,7 @@ public class Turret : MonoBehaviour {
 		}
 	}
 
-    public void Dismantle() {
+    public void Act() {
         AudioSource.PlayClipAtPoint(destructionSound, transform.position);
         Destroy(this.gameObject);
     }

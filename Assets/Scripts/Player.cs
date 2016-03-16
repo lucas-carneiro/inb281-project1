@@ -15,9 +15,10 @@ public class Player : MonoBehaviour {
 
     //Action variables
     public KeyCode actionKey = KeyCode.Alpha1;
-    public GameObject ActionText;
+    public Text ActionText;
 
     //Teleport variables
+    public bool canTeleport = false;
     public GameObject teleportTarget;
     public AudioClip teleportSound;
     public KeyCode teleportKey = KeyCode.E;
@@ -58,27 +59,30 @@ public class Player : MonoBehaviour {
 		}
 	}
 
+    //Interaction between player and objects
     void OnTriggerEnter(Collider collidingObject){
-        //If collidingObject is an Enemy
-        if (collidingObject.gameObject.name.Contains("Turret")){
-            ActionText.SetActive(true);
+        //If collidingObject is an action object
+        if (collidingObject.gameObject.tag == "Action") {
+            ActionText.text = "" +
+                collidingObject.gameObject.GetComponent<Turret>() +
+                collidingObject.gameObject.GetComponent<EmergencyGlass>() + 
+                " " + actionKey;
+            ActionText.gameObject.SetActive(true);
         }
     }
-
     void OnTriggerStay(Collider collidingObject){
-        //If collidingObject is an Enemy
-        if (collidingObject.gameObject.name.Contains("Turret")){
+        //If collidingObject is an action object
+        if (collidingObject.gameObject.tag == "Action") {
             if (Input.GetKeyDown(actionKey)){
-                collidingObject.gameObject.SendMessage("Dismantle", SendMessageOptions.DontRequireReceiver);
-                ActionText.SetActive(false);
+                collidingObject.gameObject.SendMessage("Act", SendMessageOptions.DontRequireReceiver);
+                ActionText.gameObject.SetActive(false);
             }
         }
     }
-
     void OnTriggerExit(Collider collidingObject) {
-        //If collidingObject is an Enemy
-        if (collidingObject.gameObject.name.Contains("Turret")) {
-            ActionText.SetActive(false);
+        //If collidingObject is an action object
+        if (collidingObject.gameObject.tag == "Action") {
+            ActionText.gameObject.SetActive(false);
         }
     }
 
@@ -89,11 +93,18 @@ public class Player : MonoBehaviour {
 		damageImage.color = new Vector4 (damageColor.r, damageColor.g, damageColor.b, 1f);
 	}
 
+    //Called by external game objects
+    public void getPower() {
+        canTeleport = true;
+    }
+
     void Teleport() {
-        transform.position = new Vector3(teleportTarget.transform.position.x, transform.position.y, teleportTarget.transform.position.z);
-        teleportTarget.SetActive(false);
-        inCooldown = true;
-        cooldownRemaining = teleportCooldown;
-        AudioSource.PlayClipAtPoint(teleportSound, transform.position);
+        if (canTeleport) {
+            transform.position = new Vector3(teleportTarget.transform.position.x, transform.position.y, teleportTarget.transform.position.z);
+            teleportTarget.SetActive(false);
+            inCooldown = true;
+            cooldownRemaining = teleportCooldown;
+            AudioSource.PlayClipAtPoint(teleportSound, transform.position);
+        }
     }
 }
