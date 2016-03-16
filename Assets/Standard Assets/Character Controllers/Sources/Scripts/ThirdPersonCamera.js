@@ -158,7 +158,7 @@ function Apply (dummyTarget : Transform, dummyCenter : Vector3)
 
 function Update(){
     //Using mouse scroll to change camera distance, using 1 and 4 as domain
-    distance = Mathf.Clamp(distance + Input.GetAxis("Mouse ScrollWheel") * 2, 1, 4);
+    distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 2, 1, 4);
 }
 
 function LateUpdate () {
