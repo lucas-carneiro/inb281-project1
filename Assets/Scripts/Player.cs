@@ -90,7 +90,7 @@ public class Player : MonoBehaviour {
 	}
 
     void Teleport() {
-        transform.position = teleportTarget.transform.position;
+        transform.position = new Vector3(teleportTarget.transform.position.x, transform.position.y, teleportTarget.transform.position.z);
         teleportTarget.SetActive(false);
         inCooldown = true;
         cooldownRemaining = teleportCooldown;
